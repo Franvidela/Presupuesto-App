@@ -1,7 +1,7 @@
 let expendArray = [];
 let cash;
 
-/* Guardamos presupuesto y desbloqueamos el form de gastos */
+/* Este código es responsable de manejar el evento del botón "Calcular"*/
 $('#btnBudget').click(function (event) {
     event.preventDefault()
     cash = saveBudget()
@@ -9,7 +9,7 @@ $('#btnBudget').click(function (event) {
     unBlock(cash)
 })
 
-/* Guardamos los gastos en la tabla, en el array y al mismo tiempo calculamos y actualizamos los montos*/
+/* Este código es responsable de manejar el evento del botón "Agregar Gasto"*/
 $('#btnExpend').click(function (event) {
     event.preventDefault()
     let expend = saveExpends()
@@ -17,14 +17,14 @@ $('#btnExpend').click(function (event) {
     addListItems(expend)
 })
 
-/* Eliminamos gastos de la tabla y actualizamos los montos */
+/* Este código es responsable de manejar el evento del botón de eliminación*/
 $('#tBody').on('click', '.trash', function () {
     $(this).parent().parent().remove()
     deleteItem($(this).parent().prev().prev().text())
     subExpends()
 });
 
-/* Definimos nuestra clase constructora de objetos para manejar cada gasto */
+/* Esta clase se utiliza para crear objetos de gastos con información sobre el nombre del gasto y su monto */
 class Expends {
     constructor(name, amount) {
         this.name = name
@@ -32,7 +32,14 @@ class Expends {
     }
 }
 
-/* F. para guardar el presupuesto */
+/* Esta funcion desbloquea la tabla */
+const unBlock = (cash) => {
+    if (cash > 0) {
+        $('#expendures').removeAttr('disabled')
+    }
+}
+
+/* Esta función se utiliza para obtener y validar el presupuesto ingresado por el usuario en el formulario de la aplicación de presupuesto */
 function saveBudget() {
     let budgetLock = $('#budget').val()
     if (!/[\D]/gm.test(budgetLock) && budgetLock != '' && budgetLock > 0) {
@@ -40,13 +47,13 @@ function saveBudget() {
         $('#budget').val('')
         return budget
     } else {
-        alert('Por favor ingrese un monto valido, sin puntos ni comas y solo numeros')
+        alert('Por favor ingrese solo numeros')
         $('#budget').val('')
         return 0
     }
 }
 
-/* F. donde entregamos los datos de Presupuesto y Saldo */
+/* Esta función se utiliza para actualizar y mostrar el saldo disponible en la página */
 const showMoney = (cash = 0) => {
     if (cash >= 0) {
         $('#cash').text(`$${cash.toLocaleString()}`)
@@ -56,7 +63,7 @@ const showMoney = (cash = 0) => {
     }
 }
 
-/* F. para construir nuestro objeto de gastos y guardamos en nuestro array de objetos */
+/* Esta función se utiliza para obtener y validar los valores de gasto ingresados */
 const saveExpends = () => {
     let nameExpLock = $('#nameExpend').val();
     let amntExpLock = $('#amountExpend').val();
@@ -72,7 +79,7 @@ const saveExpends = () => {
     }
 }
 
-/* F. donde entregamos los gastos a nuestra tabla */
+/* Esta funcion agrega los datos de gasto en formato de tabla */
 const addListItems = (expend) => {
     $('#tBody').html('')
     expend.forEach(item => {
@@ -86,7 +93,7 @@ const addListItems = (expend) => {
     })
 }
 
-/* F. para eliminars los gastos de nuestro array de objetos */
+/* Esta funcion sirve para borrar un elemento del array */
 const deleteItem = (product) => {
     expendArray = expendArray.filter(item => {
         if (item.name != product) {
@@ -95,7 +102,7 @@ const deleteItem = (product) => {
     })
 }
 
-/* F. para sumar los gastos en nuestro array de objetos y actualizamos Gastos y Saldo */
+/* Esta funcion suma los gastos y los devuelve como el total final, si es negativo se pone rojo. */
 const sumExpends = (expend) => {
     let expendsTotal = [];
     let total;
@@ -113,7 +120,7 @@ const sumExpends = (expend) => {
     }
 }
 
-/* F. donde sumamos los gastos eliminados de nuestro array de objetos y actualizamos Gastos y Saldo */
+/* Esta funcion suma los gastos eliminados de la tabla gastos para mostrar los datos actualizados. */
 const subExpends = () => {
     let expendsTotal = [];
     let total;
@@ -137,9 +144,3 @@ const subExpends = () => {
     }
 }
 
-/* F. elimina el disbaled en el fieldset */
-const unBlock = (cash) => {
-    if (cash > 0) {
-        $('#expendures').removeAttr('disabled')
-    }
-}
